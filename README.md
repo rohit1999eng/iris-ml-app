@@ -1,4 +1,4 @@
-# 🌿 Iris Classifier — Complete ML Pipeline
+# Iris Classifier — Complete ML Pipeline
 
 A production-ready Machine Learning pipeline that classifies Iris flowers using multiple algorithms, selects the best model via cross-validation, and serves predictions through a REST API deployed with Docker.
 
@@ -10,7 +10,7 @@ A production-ready Machine Learning pipeline that classifies Iris flowers using 
 |---------------------|:-----------:|:-------------:|:--------:|
 | Logistic Regression | 0.9583      | 0.9333        | 0.9332   |
 | Random Forest       | 0.9500      | 0.9000        | 0.8990   |
-| **SVM** ⭐          | **0.9667**  | **0.9667**    | **0.9666** |
+| **SVM**             | **0.9667**  | **0.9667**    | **0.9666** |
 | Gradient Boosting   | 0.9667      | 0.9667        | 0.9666   |
 | KNN                 | 0.9667      | 0.9333        | 0.9332   |
 
@@ -18,29 +18,27 @@ A production-ready Machine Learning pipeline that classifies Iris flowers using 
 
 ---
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
-ml-pipeline/
+.
 ├── model/
-│   ├── train.py          # Full ML pipeline (EDA → train → evaluate → save)
-│   ├── model.pkl         # Trained model (generated at build time)
-│   └── metadata.json     # Model metrics, feature ranges, class names
-├── app/
-│   ├── app.py            # Flask REST API
-│   └── templates/
-│       └── index.html    # Interactive web UI
-├── Dockerfile            # Multi-stage Docker build
-├── docker-compose.yml    # Dev + prod compose configs
-├── nginx.conf            # Nginx reverse proxy config
-├── deploy.sh             # Cloud deployment scripts
+│   ├── model.pkl
+│   └── metadata.json
+├── templates/
+│   └── index.html
+├── app.py
+├── train.py
+├── Dockerfile
+├── docker-compose.yml
+├── deploy.sh
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Run with Docker (recommended)
 
@@ -70,7 +68,7 @@ Open **http://localhost:5000** in your browser.
 
 ---
 
-## 🔌 API Reference
+## API Reference
 
 ### Health Check
 ```http
@@ -121,7 +119,7 @@ GET /api/metrics
 
 ---
 
-## ☁️ Cloud Deployment
+## Cloud Deployment
 
 ### Option A: Render.com (Free, Easiest)
 1. Push repo to GitHub
@@ -151,7 +149,7 @@ npm install -g @railway/cli
 
 ---
 
-## 🧪 Testing the API
+## Testing the API
 
 ```bash
 # Health check
@@ -168,7 +166,7 @@ curl http://localhost:5000/api/metrics | python3 -m json.tool
 
 ---
 
-## 🔬 ML Pipeline Details
+## ML Pipeline Details
 
 ### Pipeline Steps
 1. **Data Loading** — UCI Iris dataset (150 samples, 4 features, 3 classes)
@@ -187,7 +185,7 @@ curl http://localhost:5000/api/metrics | python3 -m json.tool
 
 ---
 
-## 📦 Docker Architecture
+## Docker Architecture
 
 ```
 ┌─────────────────────────────────────┐
@@ -217,5 +215,5 @@ curl http://localhost:5000/api/metrics | python3 -m json.tool
 
 ---
 
-## 📄 License
+## License
 MIT
