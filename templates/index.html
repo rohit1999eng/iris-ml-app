@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Iris Classifier</title>
+
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center mb-4">🌸 Iris Flower Prediction</h2>
+
+        <form id="predictForm">
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Sepal Length</label>
+                    <input type="number" step="any" class="form-control" id="sepal_length">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Sepal Width</label>
+                    <input type="number" step="any" class="form-control" id="sepal_width">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Petal Length</label>
+                    <input type="number" step="any" class="form-control" id="petal_length">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Petal Width</label>
+                    <input type="number" step="any" class="form-control" id="petal_width">
+                </div>
+
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary px-4">Predict</button>
+            </div>
+        </form>
+
+        <hr>
+
+        <h4 class="text-center text-success" id="result"></h4>
+        <canvas id="chart" height="100"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+let chart;
+
+document.getElementById("predictForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const fields = [
+        {id: "sepal_length", key: "sepal length (cm)", name: "Sepal Length"},
+        {id: "sepal_width", key: "sepal width (cm)", name: "Sepal Width"},
+        {id: "petal_length", key: "petal length (cm)", name: "Petal Length"},
+        {id: "petal_width", key: "petal width (cm)", name: "Petal Width"}
+    ];
+
+    let data = {};
+    let error = "";
+
+    // 🔍 VALIDATION
+    for (let field of fields) {
+        let value = document.getElementById(field.id).value;
+
+        if (value.trim() === "") {
+            error = field.name + " is required!";
+            break;
+        }
+
+        value = parseFloat(value);
+
+        if (isNaN(value)) {
+            error = field.name + " must be a valid number!";
+            break;
+        }
+
+        if (value < 0) {
+            error = field.name + " cannot be negative!";
+            break;
+        }
+
+        data[field.key] = value;
+    }
+
+    // ❌ SHOW ERROR
+    if (error) {
+        const resultEl = document.getElementById("result");
+        resultEl.innerText = "❌ " + error;
+        resultEl.classList.remove("text-success");
+        resultEl.classList.add("text-danger");
+
+        if (chart) chart.destroy();
+        return;
+    }
+
+    // 🔄 LOADING MESSAGE
+    const resultEl = document.getElementById("result");
+    resultEl.innerText = "⏳ Predicting...";
+    resultEl.classList.remove("text-danger");
+    resultEl.classList.remove("text-success");
+
+    // 🚀 API CALL
+    fetch("/api/predict", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(result => {
+        // ✅ SHOW RESULT
+        //resultEl.innerText = "✅ Prediction: " + result.prediction;
+        resultEl.innerHTML = `
+             <strong>Prediction:</strong> ${result.prediction.toUpperCase()}
+         `;
+        resultEl.classList.remove("text-danger");
+        resultEl.classList.add("text-success");
+
+        // 📊 PREPARE CHART DATA
+        const labels = Object.keys(result.confidence);
+        const values = Object.values(result.confidence);
+
+        const ctx = document.getElementById("chart").getContext("2d");
+
+        // Destroy old chart
+        if (chart) chart.destroy();
+
+        // 🎨 CREATE NEW CHART
+        chart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Confidence (%)",
+                    data: values,
+                    backgroundColor: ["#4CAF50", "#2196F3", "#FF9800"]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    })
+    .catch(() => {
+        resultEl.innerText = "❌ Server error. Try again.";
+        resultEl.classList.add("text-danger");
+
+        if (chart) chart.destroy();
+    });
+});
+</script>
+</body>
+</html>
